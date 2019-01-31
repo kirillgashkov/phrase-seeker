@@ -1,6 +1,6 @@
 # Idiom Seeker
 
-Python script which is capable of searching idioms in english texts.
+Python script that searches for idioms in english texts.
 
 ## Features
 
@@ -16,7 +16,7 @@ Python script which is capable of searching idioms in english texts.
 ## Installation
 
 - Clone this repository.
-- Install required packages. See the [requirements.txt](requirements.txt)).
+- Install required packages. See the ([requirements.txt](requirements.txt)).
 
 ## Usage
 
