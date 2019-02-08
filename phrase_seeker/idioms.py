@@ -2,34 +2,40 @@
 #
 # Distributed under MIT License. See LICENSE file for details.
 
-from typing import List
-from itertools import groupby
+
 import copy
-import downgrader
+import dataclasses
+import itertools
+from typing import List
+
+from idiom_seeker import downgrader
 
 
 SBJ_DEPS = {'nsubj', 'csubj', 'dobj', 'pobj', 'dative'}
 SBJDLR_DEPS = {'poss'}
 
-class Idiom:
-    def __init__(self, words: List[downgrader.Word]):
-        self.words = words
-        self.text = ' '.join([w.text for w in words])
-        self.lemmas = [w.lemma for w in words]
-        placeholder_deps = set()
-        if '-SBJ-' in self.lemmas:
-            placeholder_deps |= SBJ_DEPS
-        if '-SBJ$-' in self.lemmas:
-            placeholder_deps |= SBJDLR_DEPS
-        self.placeholder_deps = placeholder_deps
 
-    def __repr__(self):
-        return (
-            f'{self.text}\n'
-            f'\t{self.words}\n'
-            f'\t{self.lemmas}\n'
-            f'\t{self.placeholder_deps}'
-        )
+@dataclasses.dataclass
+class Idiom:
+    """
+    A container for the words of the idiom, textual representation, lemmas and
+    placeholder deps.
+    """
+
+    words: List[downgrader.Word]
+    text: str = dataclasses.field(init=False)
+    lemmas: List[str] = dataclasses.field(init=False)
+    placeholder_deps: List[str] = dataclasses.field(init=False)
+
+    def __post_init__(self):
+        self.text = ' '.join([w.text for w in self.words])
+        self.lemmas = [w.lemma for w in self.words]
+
+        self.placeholder_deps = set()
+        if '-SBJ-' in self.lemmas:
+            self.placeholder_deps |= SBJ_DEPS
+        if '-SBJ$-' in self.lemmas:
+            self.placeholder_deps |= SBJDLR_DEPS
 
 
 def _adapt_idiom(source_idiom):
@@ -69,6 +75,6 @@ def get_idioms(filename: str) -> List[Idiom]:
     adapted_idioms = [_adapt_idiom(i) for i in source_idioms]
     downgraded_words = downgrader.downgrade('\n'.join(adapted_idioms))
     cleaned_words = _insert_placeholders(downgraded_words)
-    grouped_words = groupby(cleaned_words, lambda x: x.text == '\n')
+    grouped_words = itertools.groupby(cleaned_words, lambda x: x.text == '\n')
     downgraded_idioms = [list(g) for k, g in grouped_words if not k]
     return [Idiom(i) for i in downgraded_idioms]
