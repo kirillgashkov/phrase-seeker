@@ -1,6 +1,6 @@
-"""
-Reads idioms from .txt file
-"""
+# Copyright (c) 2019 Kirill Gashkov
+#
+# Distributed under MIT License. See LICENSE file for details.
 
 from typing import List
 from itertools import groupby

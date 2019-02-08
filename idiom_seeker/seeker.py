@@ -1,6 +1,6 @@
-"""
-Seeks the strings in the given string
-"""
+# Copyright (c) 2019 Kirill Gashkov
+#
+# Distributed under MIT License. See LICENSE file for details.
 
 from typing import List, Dict
 import downgrader

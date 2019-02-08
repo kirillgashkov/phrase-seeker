@@ -1,6 +1,6 @@
-"""
-Seeks idioms in textfiles
-"""
+# Copyright (c) 2019 Kirill Gashkov
+#
+# Distributed under MIT License. See LICENSE file for details.
 
 import json
 import downgrader
