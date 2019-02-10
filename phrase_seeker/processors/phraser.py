@@ -11,6 +11,6 @@ class Phraser:
         self.downgrader = downgrader
 
     def phrase(self, s: str) -> models.Phrase:
-        words = self.downgrader.downgrade(s)
+        words = self.downgrader.words(s)
         lemmas = [w.lemma for w in words]
         return models.Phrase(s, words, lemmas)

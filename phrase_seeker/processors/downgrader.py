@@ -14,6 +14,6 @@ class Downgrader:
     def __init__(self):
         self.nlp = spacy.load('en_core_web_sm')
 
-    def downgrade(self, s: str) -> List[models.Word]:
+    def words(self, s: str) -> List[models.Word]:
         doc = self.nlp(s)
         return [models.Word(tkn.text, tkn.lemma_) for tkn in doc]
