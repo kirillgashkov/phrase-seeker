@@ -8,7 +8,7 @@ from typing import List
 from phrase_seeker import models
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Sentence:
     text: str
     words: List[models.Word]

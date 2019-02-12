@@ -7,7 +7,7 @@ import dataclasses
 from phrase_seeker import models
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Match:
     phrase: models.Phrase
     sentence: models.Sentence

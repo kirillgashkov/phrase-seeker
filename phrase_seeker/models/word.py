@@ -5,7 +5,7 @@
 import dataclasses
 
 
-@dataclasses.dataclass
+@dataclasses.dataclass(frozen=True)
 class Word:
     text: str
     lemma: str
