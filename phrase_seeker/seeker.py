@@ -12,6 +12,7 @@ from phrase_seeker import models, phraser, sentencer
 def seek_phrases_in_text(
         phrases_as_strings: List[str],
         text: str,
+        should_delete_cache: bool = True,
         ) -> List[models.Match]:
     nlp = spacy.load('en_core_web_sm', disable=['ner', 'textcat'])
 
@@ -23,7 +24,13 @@ def seek_phrases_in_text(
         sentence_matches = _phrases_in_sentence(phrases, sentence)
         matches += sentence_matches
 
+    if should_delete_cache:
+        delete_cache()
     return matches
+
+
+def delete_cache():
+    _word_phrases = dict()
 
 
 #

@@ -2,9 +2,10 @@
 #
 # Distributed under MIT License. See LICENSE file for details.
 
-from phrase_seeker.seeker import seek_phrases_in_text
+from phrase_seeker.seeker import seek_phrases_in_text, delete_cache
 
 
 __all__ = {
     'seek_phrases_in_text',
+    'delete_cache',
 }
