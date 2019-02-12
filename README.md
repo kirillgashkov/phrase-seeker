@@ -41,8 +41,6 @@ for match in matches:
     print(match.sentence.start, match.sentence.end, '-', match.sentence.text)
 ```
 
-There is also a [demo file](demo.py) with the same code.
-
 ## License
 
 Distributed under the MIT License. See the [LICENSE.md](LICENSE.md) for details.
