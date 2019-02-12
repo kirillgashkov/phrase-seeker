@@ -2,48 +2,34 @@
 #
 # Distributed under MIT License. See LICENSE file for details.
 
-import json
-import downgrader
-import idioms
-from seeker import Seeker
+from timeit import default_timer as timer
+
+from phrase_seeker import seek_phrases_in_text
 
 
-textfiles = [
-    'text.txt',
-    'b-harry-potter-1.txt',
-    'b-murder-on-the-orient-express.txt',
-    'b-the-lord-of-rings-1.txt',
-    'm-the-green-mile.txt',
-    'm-the-mask.txt',
-    'm-the-wizard-of-oz.txt',
-]
+def with_time(function):
+    def wrapper():
+        start = timer()
+        function()
+        end = timer()
+        print(
+            f'--- elapsed time ---\n'
+            f'{end - start:.3f}s'
+        )
+    return wrapper
 
 
-def seek_for_idioms(seeker, textfile):
-    print(f'operating on {textfile}...')
-
-    print('\tgetting text...')
-    with open(f'texts/{textfile}', 'r') as f:
-        text = f.read()
-    text_ = downgrader.downgrade(text)
-
-    print('\tseeking...')
-    matches = seeker.seek(text_)
-
-    print('\twriting response...')
-    with open(f'responses/{textfile}', 'w+') as f:
-        f.write(json.dumps(matches, indent=1))
-
-    print('\tDone.')
-
-
-
+@with_time
 def main():
-    print('getting idioms...')
-    idioms_ = idioms.get_idioms('idioms.txt')
-    seeker = Seeker(idioms_)
-    for textfile in textfiles:
-        seek_for_idioms(seeker, textfile)
+    text = 'Insert your awesome text here'
+
+    phrases = ['inserted text']
+
+    matches = seek_phrases_in_text(phrases, text)
+
+    for match in matches:
+        print(match.phrase.text)
+        print(f'    [{match.sentence.start}:{match.sentence.end}] {match.sentence.text}')
 
 
 if __name__ == '__main__':
