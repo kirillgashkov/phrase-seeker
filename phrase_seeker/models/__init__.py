@@ -4,3 +4,5 @@
 
 from phrase_seeker.models.word import Word
 from phrase_seeker.models.phrase import Phrase
+from phrase_seeker.models.sentence import Sentence
+from phrase_seeker.models.match import Match

@@ -3,10 +3,14 @@
 # Distributed under MIT License. See LICENSE file for details.
 
 import dataclasses
+from typing import List
+
+from phrase_seeker import models
 
 
 @dataclasses.dataclass
-class Word:
+class Sentence:
     text: str
-    lemma: str
-    dep: str
+    words: List[models.Word]
+    start: int
+    end: int

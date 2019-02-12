@@ -4,9 +4,10 @@
 
 import dataclasses
 
+from phrase_seeker import models
+
 
 @dataclasses.dataclass
-class Word:
-    text: str
-    lemma: str
-    dep: str
+class Match:
+    phrase: models.Phrase
+    sentence: models.Sentence
