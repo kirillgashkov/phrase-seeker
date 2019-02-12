@@ -2,65 +2,117 @@
 #
 # Distributed under MIT License. See LICENSE file for details.
 
-from typing import List, Dict
-import downgrader
-from idioms import Idiom
+from typing import Set, List, Dict, Optional
+
+import spacy
+
+from phrase_seeker import models, phraser, sentencer
 
 
-class Seeker:
-    def __init__(self, idioms: List[Idiom]):
-        self.idioms = idioms
-        self.word_idioms = dict()
+def seek_phrases_in_text(
+        phrases_as_strings: List[str],
+        text: str,
+        ) -> List[models.Match]:
+    nlp = spacy.load('en_core_web_sm', disable=['ner', 'textcat'])
 
-    def _idioms_for_word(self, word):
-        if word not in self.word_idioms:
-            word_idioms = list()
-            for idiom in self.idioms:
-                if word.lemma in idiom.lemmas:
-                    word_idioms.append(idiom)
-                if word.dep in idiom.placeholder_deps:
-                    word_idioms.append(idiom)
-            self.word_idioms[word] = word_idioms
-        return self.word_idioms[word]
+    phrases = phraser.phrases_from_strings(phrases_as_strings, nlp)
+    sentences = sentencer.sentences_from_text(text, nlp)
 
-    @staticmethod
-    def _check_suspect(suspect_words, matches, idiom):
-        if len(suspect_words[0]) == len(idiom.words):
-            t_idiom = idiom.text
-            matched = True
-            for got, expected in zip(suspect_words[0], idiom.words):
-                equal_lemmas = got.lemma == expected.lemma
-                expected_placeholder = expected.lemma in {'-SBJ-', '-SBJ$-'}
-                equal_deps = got.dep == expected.dep
-                if not (equal_lemmas or expected_placeholder and equal_deps):
-                    matched = False
-                    break
-            if matched:
-                if t_idiom not in matches:
-                    matches[t_idiom] = 0
-                matches[t_idiom] += 1
-            del suspect_words
+    matches = list()
+    for sentence in sentences:
+        sentence_matches = _phrases_in_sentence(phrases, sentence)
+        matches += sentence_matches
 
-    def _handle_suspects(self, suspects, matches, idioms, word):
-        for idiom in idioms:
-            t_idiom = idiom.text
-            if t_idiom not in suspects:
-                suspects[t_idiom] = [list(), 0]
-            suspect_words = suspects[t_idiom]
-            suspect_words[0].append(word)
-            self._check_suspect(suspect_words, matches, idiom)
+    return matches
 
-    @staticmethod
-    def _increment_suspects(suspects):
-        for suspect in suspects.values():
-            suspect[1] += 1
-            if suspect[1] == 10:
-                del suspect
 
-    def seek(self, text: List[downgrader.Word]) -> Dict[str, int]:
-        matches, suspects = dict(), dict()
-        for word in text:
-            word_idioms = self._idioms_for_word(word)
-            self._handle_suspects(suspects, matches, word_idioms, word)
-            self._increment_suspects(suspects)
-        return matches
+#
+# Phrases
+#
+
+
+def _phrases_in_sentence(
+        phrases: Set[models.Phrase],
+        sentence: models.Sentence,
+        ) -> List[models.Match]:
+    suspects = dict()
+
+    for word in sentence.words:
+        phrases_ = _phrases_for_word(word, phrases)
+        word_suspects = {phrase: [word] for phrase in phrases_}
+        _merge_suspects(suspects, word_suspects)
+
+    return _matches_from_suspects(suspects, sentence)
+
+
+_word_phrases = dict()
+
+
+def _phrases_for_word(
+        word: models.Word,
+        all_phrases: Set[models.Phrase],
+        ) -> Set[models.Phrase]:
+    if word in _word_phrases:
+        return _word_phrases[word]
+    phrases = set(phrase for phrase in all_phrases if word in phrase)
+    _word_phrases[word] = phrases
+    return phrases
+
+
+#
+# Suspects
+#
+
+
+def _merge_suspects(
+        suspects: Dict[models.Phrase, List[models.Word]],
+        with_suspects: Dict[models.Phrase, List[models.Word]],
+        ):
+    for phrase, words in with_suspects.items():
+        if phrase not in suspects:
+            suspects[phrase] = list()
+        suspects[phrase].extend(words)
+
+
+#
+# Matches
+#
+
+
+def _matches_from_suspects(
+        suspects: Dict[models.Phrase, List[models.Word]],
+        sentence: models.Sentence,
+        ) -> List[models.Match]:
+    matches = list()
+
+    for phrase, words in suspects.items():
+        if _is_a_match(phrase, words):
+            match = models.Match(phrase, sentence)
+            matches.append(match)
+
+    return matches
+
+
+def _is_a_match(phrase: models.Phrase, words: List[models.Word]) -> bool:
+    words_copy = words.copy()
+    for phrase_word in phrase.words:
+        index = _index_of_phrase_word_in_list(phrase_word, words_copy)
+        if index is None:
+            return False
+        del words_copy[index]
+    return True
+
+
+def _index_of_phrase_word_in_list(
+        phrase_word: models.Word,
+        words: List[models.Word],
+        ) -> Optional[int]:
+    if phrase_word.lemma == '-INDEF-':
+        for i, word in enumerate(words):
+            if word.dep == phrase_word.dep:
+                return i
+    else:
+        for i, word in enumerate(words):
+            if word.lemma == phrase_word.lemma:
+                return i
+    return None
