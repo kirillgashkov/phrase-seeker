@@ -17,8 +17,21 @@ Searches for phrases in texts regardless of their form and words between.
 
 ## Installation
 
-1. Clone this repository.
-2. Install required packages. See the ([requirements.txt](requirements.txt)).
+#### Manual
+
+1. Clone this repository
+	
+	```shell
+	$ git clone git@github.com:kirillgashkov/phrase-seeker.git
+	```
+
+2. Install required packages (see the [requirements.txt](requirements.txt))
+
+	```shell
+	$ pip install -r phrase-seeker/requirements.txt
+	```
+
+3. Done.
 
 ## Usage
 
