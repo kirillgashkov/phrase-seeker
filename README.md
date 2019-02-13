@@ -9,7 +9,7 @@ Searches for phrases in texts regardless of their form and words between.
 - Find phrases even if they aren't in normalized form;
 - Find phrases even if there are words between (e.g. adjectives);
 - Get the sentence where the phrase was found;
-- Get the location of the sentence in the text
+- Get the location of the sentence in the text.
 
 ## Requirements
 
@@ -37,7 +37,7 @@ matches = seek_phrases_in_text(phrases, text)
 
 # operate on the matches
 for match in matches:
-	print(match.phrase.text)
+    print(match.phrase.text)
     print(match.sentence.start, match.sentence.end, '-', match.sentence.text)
 ```
 
