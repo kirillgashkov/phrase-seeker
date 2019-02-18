@@ -30,6 +30,7 @@ def seek_phrases_in_text(
 
 
 def delete_cache():
+    global _word_phrases
     _word_phrases = dict()
 
 
