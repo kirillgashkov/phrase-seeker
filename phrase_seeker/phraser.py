@@ -2,15 +2,14 @@
 #
 # Distributed under MIT License. See LICENSE file for details.
 
-from typing import List, Set, Tuple
+from typing import Any, Callable, List, Set, Tuple
 
 from phrase_seeker import models
 
 
 def phrases_from_strings(
-        strings: List[str],
-        nlp: callable
-        ) -> Set[models.Phrase]:
+    strings: List[str], nlp: Callable[..., Any]
+) -> Set[models.Phrase]:
     phrases = set()
 
     for string in strings:
@@ -24,16 +23,16 @@ def phrases_from_strings(
 
 
 def _convert_to_phrase_words(
-        words: Tuple[models.Word, ...],
-        ) -> Tuple[models.Word, ...]:
-    indefinites = {'-PRON-', 'someone', 'somebody', 'something', 'somewhere'}
+    words: Tuple[models.Word, ...],
+) -> Tuple[models.Word, ...]:
+    indefinites = {"-PRON-", "someone", "somebody", "something", "somewhere"}
 
     def should_be_phrase_word(word):
-        return word.dep != 'case'
+        return word.dep != "case"
 
     def substitute_for_phrase_word(word):
         if word.lemma in indefinites:
-            return models.Word(word.text, '-INDEF-', word.dep)
+            return models.Word(word.text, "-INDEF-", word.dep)
         return word
 
     filtered = filter(should_be_phrase_word, words)

@@ -3,7 +3,7 @@
 # Distributed under MIT License. See LICENSE file for details.
 
 import dataclasses
-from typing import Tuple
+from typing import Any, Tuple
 
 from phrase_seeker import models
 
@@ -15,13 +15,13 @@ class Phrase:
     lemmas: Tuple[str, ...] = dataclasses.field(init=False)
     indefinte_deps: Tuple[str, ...] = dataclasses.field(init=False)
 
-    def __post_init__(self):
-        lemmas = tuple(w.lemma for w in self.words if w.lemma != '-INDEF-')
-        indef_deps = tuple([w.dep for w in self.words if w.lemma == '-INDEF-'])
-        object.__setattr__(self, 'lemmas', lemmas)
-        object.__setattr__(self, 'indefinte_deps', indef_deps)
+    def __post_init__(self) -> None:
+        lemmas = tuple(w.lemma for w in self.words if w.lemma != "-INDEF-")
+        indef_deps = tuple([w.dep for w in self.words if w.lemma == "-INDEF-"])
+        object.__setattr__(self, "lemmas", lemmas)
+        object.__setattr__(self, "indefinte_deps", indef_deps)
 
-    def __contains__(self, item):
+    def __contains__(self, item: Any) -> None:
         if type(item) is not models.Word:
             return False
         lemma_check = item.lemma in self.lemmas
