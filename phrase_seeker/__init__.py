@@ -6,6 +6,6 @@ from phrase_seeker.seeker import seek_phrases_in_text, delete_cache
 
 
 __all__ = {
-    'seek_phrases_in_text',
-    'delete_cache',
+    "seek_phrases_in_text",
+    "delete_cache",
 }

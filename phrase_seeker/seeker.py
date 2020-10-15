@@ -10,11 +10,11 @@ from phrase_seeker import models, phraser, sentencer
 
 
 def seek_phrases_in_text(
-        phrases_as_strings: List[str],
-        text: str,
-        should_delete_cache: bool = True,
-        ) -> List[models.Match]:
-    nlp = spacy.load('en_core_web_sm', disable=['ner', 'textcat'])
+    phrases_as_strings: List[str],
+    text: str,
+    should_delete_cache: bool = True,
+) -> List[models.Match]:
+    nlp = spacy.load("en_core_web_sm", disable=["ner", "textcat"])
 
     phrases = phraser.phrases_from_strings(phrases_as_strings, nlp)
     sentences = sentencer.sentences_from_text(text, nlp)
@@ -40,9 +40,9 @@ def delete_cache():
 
 
 def _phrases_in_sentence(
-        phrases: Set[models.Phrase],
-        sentence: models.Sentence,
-        ) -> List[models.Match]:
+    phrases: Set[models.Phrase],
+    sentence: models.Sentence,
+) -> List[models.Match]:
     suspects = dict()
 
     for word in sentence.words:
@@ -57,9 +57,9 @@ _word_phrases = dict()
 
 
 def _phrases_for_word(
-        word: models.Word,
-        all_phrases: Set[models.Phrase],
-        ) -> Set[models.Phrase]:
+    word: models.Word,
+    all_phrases: Set[models.Phrase],
+) -> Set[models.Phrase]:
     if word in _word_phrases:
         return _word_phrases[word]
     phrases = set(phrase for phrase in all_phrases if word in phrase)
@@ -73,9 +73,9 @@ def _phrases_for_word(
 
 
 def _merge_suspects(
-        suspects: Dict[models.Phrase, List[models.Word]],
-        with_suspects: Dict[models.Phrase, List[models.Word]],
-        ):
+    suspects: Dict[models.Phrase, List[models.Word]],
+    with_suspects: Dict[models.Phrase, List[models.Word]],
+):
     for phrase, words in with_suspects.items():
         if phrase not in suspects:
             suspects[phrase] = list()
@@ -88,9 +88,9 @@ def _merge_suspects(
 
 
 def _matches_from_suspects(
-        suspects: Dict[models.Phrase, List[models.Word]],
-        sentence: models.Sentence,
-        ) -> List[models.Match]:
+    suspects: Dict[models.Phrase, List[models.Word]],
+    sentence: models.Sentence,
+) -> List[models.Match]:
     matches = list()
 
     for phrase, words in suspects.items():
@@ -112,10 +112,10 @@ def _is_a_match(phrase: models.Phrase, words: List[models.Word]) -> bool:
 
 
 def _index_of_phrase_word_in_list(
-        phrase_word: models.Word,
-        words: List[models.Word],
-        ) -> Optional[int]:
-    if phrase_word.lemma == '-INDEF-':
+    phrase_word: models.Word,
+    words: List[models.Word],
+) -> Optional[int]:
+    if phrase_word.lemma == "-INDEF-":
         for i, word in enumerate(words):
             if word.dep == phrase_word.dep:
                 return i

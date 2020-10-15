@@ -2,12 +2,12 @@
 #
 # Distributed under MIT License. See LICENSE file for details.
 
-from typing import List
+from typing import Any, Callable, List
 
 from phrase_seeker import models
 
 
-def sentences_from_text(text: str, nlp: callable) -> List[models.Sentence]:
+def sentences_from_text(text: str, nlp: Callable[..., Any]) -> List[models.Sentence]:
     sentences = list()
 
     for sent in nlp(text).sents:
