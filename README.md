@@ -1,6 +1,7 @@
 # Phrase Seeker
 
-Search texts for phrases regardless of their forms and words in-between.
+Phrase Seeker is a Python library that searches for phrases in a text, regardless of their form or intervening words.
+It was developed in February 2019 to perform text analysis for a local scientific conference.
 
 ## Features
 
